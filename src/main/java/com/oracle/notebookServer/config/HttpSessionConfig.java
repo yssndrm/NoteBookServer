@@ -10,9 +10,17 @@ import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.User.UserBuilder;
 
 @Configuration
-public class HttpSessionConfig {
+@EnableWebSecurity
+public class HttpSessionConfig extends WebSecurityConfigurerAdapter {
     @Bean                           // bean for http session listener
     public HttpSessionListener httpSessionListener() {
         return new HttpSessionListener() {
@@ -61,4 +69,43 @@ public class HttpSessionConfig {
             }
         };
     }
+    
+    
+    @Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+		// add our users for in memory authentication
+		
+		UserBuilder users = User.withDefaultPasswordEncoder();
+		
+		auth.inMemoryAuthentication()
+			.withUser(users.username("amine").password("test123").roles("EMPLOYEE"))
+			.withUser(users.username("salah").password("test123").roles("EMPLOYEE", "MANAGER"))
+			.withUser(users.username("yassine").password("test123").roles("EMPLOYEE", "ADMIN"));
+	}
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+
+		// secures all REST endpoints under "/api/execute"
+		http.authorizeRequests()
+		.antMatchers("/api/execute/**").authenticated()
+		.and()
+		.httpBasic()
+		.and()
+		.csrf().disable()
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+						
+			
+
+	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

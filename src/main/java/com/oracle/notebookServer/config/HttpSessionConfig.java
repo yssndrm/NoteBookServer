@@ -10,6 +10,7 @@ import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.User.UserBuilder;
 
 @Configuration
 @EnableWebSecurity
+@EnableAspectJAutoProxy
 public class HttpSessionConfig extends WebSecurityConfigurerAdapter {
     @Bean                           // bean for http session listener
     public HttpSessionListener httpSessionListener() {
